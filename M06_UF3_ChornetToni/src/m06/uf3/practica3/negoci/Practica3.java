@@ -1,3 +1,6 @@
+package m06.uf3.practica3.negoci;
+
+import m06.uf3.practica3.presentacio.Interficie;
 import org.basex.core.BaseXException;
 import org.basex.core.Context;
 import org.basex.core.cmd.CreateDB;
@@ -6,64 +9,78 @@ import org.basex.core.cmd.XQuery;
 
 public class Practica3 {
 
-    static Context context = new Context();
-    static Interficie interficie = new Interficie();
-    static String pais;
+    private static Context context = new Context();
+    private static Interficie interficie = new Interficie();
+    public static String pais;
 
     public static void main(String[] args) throws BaseXException {
 
-        interficie.Header();
-        interficie.Llistat();
-
-        comprovarBBDD("for $p in mondial return $p/country/name[1]/text()");
-
-
-        interficie.DemanaPais();
-        interficie.Resultat();
-
-        comprovarBBDD("//country/name='" + pais + "'");
-        comprovarBBDD("//country[@inflation]/name='" + pais + "'");
-        comprovarBBDD("//country[@name='" + pais + "']/religions/text()");
-
-    }
-
-    private static void comprovarBBDD(String query) {
+        //VARIABLES
+        String nom = "";
+        String inflacio = "";
+        String religio = "";
 
         try {
 
-            new Open("factbook").execute(context);
+            //Obrim o creem la BBDD
+            comprovarBBDD();
 
-            try {
+            //Mostrem part de la interficie
+            interficie.Header();
+            interficie.Llistat();
 
-                query(query);
+            //Mostrem els paisos actuals, hi han alguns que tenen mes d'un nom per tant
+            //o limitem amb name[1] per agafar tant sols el primer.
+            System.out.println(query("for $p in mondial return $p/country/name[1]/text()"));
 
-            } catch (BaseXException e) {
+            //Seguim mostrant la interficie
+            interficie.DemanaPais();
 
-                System.out.println("Error en la XQUERY");
+            //Agafem el nom del pais i el comprovem
+            nom = query("data(//country[@name='" + pais + "']/name)");
+
+            //Si el pais existeix comprovem inflacio i religio, si no existeix ho avisem.
+            if (!nom.equals("")) {
+
+                interficie.Resultat();
+
+                //Mostrem el nom del pais
+                System.out.println("Nom: " + nom);
+
+                //Emmagatzemem inflacio i religio
+                inflacio = query("data(//country[@name='" + pais + "']/@inflation)");
+                religio = query("data(//country[@name='" + pais + "']/religions)");
+
+                //Comprovem inflacio i religio
+                if (!inflacio.equals("")) {
+                    System.out.println("La inflacio es de " + inflacio + "%.");
+                }
+
+                if (!religio.equals("")) {
+                    System.out.println("Les religions del pais son:");
+                    System.out.println(religio);
+                }
+            // Avisem de que no es un pais valid
+            } else {
+
+                System.out.println(pais + " no es un pais.");
 
             }
 
         } catch (Exception e) {
 
-            try {
-
-                System.out.println("Create a new databae.");
-                new CreateDB("DBExemple", "universitats-v2.xml").execute(context);
-                System.out.println("S'ha creat la BD");
-
-            } catch (Exception ex) {
-
-                System.out.println("No se la creado la DB");
-            }
+            e.printStackTrace();
 
         } finally {
 
             try {
 
+                //Tanquem la BBDD
                 context.close();
 
             } catch (Exception e) {
 
+                //Avisem de que hi ha un error al tancar la BBDD
                 System.out.println("No se ha podido cerrar la DB");
 
             }
@@ -72,10 +89,44 @@ public class Practica3 {
 
     }
 
+    private static void comprovarBBDD() {
 
-    static public void query(final String query) throws BaseXException {
-        System.out.println(new XQuery(query).execute(context));
+        try {
+
+            //Intentem obrir la BBDD
+            new Open("factbook").execute(context);
+
+        } catch (Exception e) {
+
+            try {
+
+                //Creem la BBDD
+                System.out.println("Create a new databae.");
+                new CreateDB("factbook", "src/factbook.xml").execute(context);
+                System.out.println("S'ha creat la BD");
+
+            } catch (Exception ex) {
+
+                //Avisem de que no s'ha creat la BBDD
+                System.out.println("No se la creado la DB");
+            }
+
+        }
+
     }
 
+    //Executem la query i tornem el resultat
+    static public String query(final String query) throws BaseXException {
+        return new XQuery(query).execute(context);
+    }
+
+    //GETTERS I SETTERS
+    public static Context getContext() {
+        return context;
+    }
+
+    public static String getPais() {
+        return pais;
+    }
 
 }

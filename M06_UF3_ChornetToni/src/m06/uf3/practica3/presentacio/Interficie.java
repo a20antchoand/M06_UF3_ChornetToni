@@ -1,3 +1,7 @@
+package m06.uf3.practica3.presentacio;
+
+import m06.uf3.practica3.negoci.Practica3;
+
 import java.util.Scanner;
 
 public class Interficie {
@@ -19,24 +23,22 @@ public class Interficie {
 
     public void Llistat () {
 
-        String llistat = "************La llista actual de paisos es: ************\n";
+        String llistat = "/\\/\\/\\/\\/\\/\\/\\La llista actual de paisos es: /\\/\\/\\/\\/\\/\\/\\" + "\n";
 
         System.out.println(llistat);
 
     }
 
     public void DemanaPais() {
-        System.out.print("***Siusplau introdueix un pais: ");
+        System.out.print("\n\nSiusplau introdueix un pais: ");
         Practica3.pais = s.nextLine();
     }
 
     public void Resultat () {
-
         StringBuilder resultat = new StringBuilder();
-
-        resultat.append("**************************************\n");
-        resultat.append("**************************************\n");
-        resultat.append("***Les dades del pais escollit son:***\n");
+        resultat.append("\n\n____________________________________\n");
+        resultat.append("| Les dades del pais escollit son: |\n");
+        resultat.append("____________________________________\n\n");
 
         System.out.println(resultat);
 
