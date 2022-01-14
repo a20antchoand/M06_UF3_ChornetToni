@@ -7,6 +7,8 @@ import org.basex.core.cmd.CreateDB;
 import org.basex.core.cmd.Open;
 import org.basex.core.cmd.XQuery;
 
+import java.io.File;
+
 public class Practica3 {
 
     private static Context context = new Context();
@@ -102,7 +104,7 @@ public class Practica3 {
 
                 //Creem la BBDD
                 System.out.println("Create a new databae.");
-                new CreateDB("factbook", "src/factbook.xml").execute(context);
+                new CreateDB("factbook", "src" + File.separator + "factbook.xml").execute(context);
                 System.out.println("S'ha creat la BD");
 
             } catch (Exception ex) {
