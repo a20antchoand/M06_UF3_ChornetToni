@@ -45,4 +45,7 @@ public class Interficie {
     }
 
 
+    public void mostrarMissatge(String missatge) {
+        System.out.println(missatge);
+    }
 }
