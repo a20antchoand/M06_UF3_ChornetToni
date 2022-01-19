@@ -6,6 +6,7 @@ import org.basex.api.client.ClientSession;
 import org.basex.core.cmd.Open;
 import m06.uf3.practica3_2.presentacio.Interficie;
 import java.io.IOException;
+import java.net.ConnectException;
 
 public class Practica3 {
 
@@ -22,6 +23,8 @@ public class Practica3 {
 
             //Obrim o creem la BBDD
             session = comprovarBBDD();
+
+            if (session == null) System.exit(1);
 
             //Mostrem part de la interficie
             interficie.Header();
@@ -79,13 +82,17 @@ public class Practica3 {
     }
 
     private static ClientSession comprovarBBDD() throws IOException {
+        try {
+            ClientSession session = new ClientSession("localhost", 1984, "admin", "admin");
 
-        ClientSession session = new ClientSession("localhost", 1984, "admin", "admin");
+            //Intentem obrir la BBDD
+            session.execute(new Open("factbook"));
+            return session;
+        } catch (ConnectException exception) {
+            System.out.println("No s'ha pogut conectar al servidor");
+        }
 
-        //Intentem obrir la BBDD
-        session.execute(new Open("factbook"));
-        return session;
-
+        return null;
     }
 
 
